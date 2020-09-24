@@ -1,24 +1,30 @@
 {
-  "name": "payfast",
-  "version": "1.0.0",
-  "description": "Um gateway de pagamentos por meio de recursos http",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/joaobispo2077/payfast.git"
-  },
-  "keywords": [
-    "gateway.",
-    "pagamentos",
-    "api"
-  ],
-  "author": "João Bispo",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/joaobispo2077/payfast/issues"
-  },
-  "homepage": "https://github.com/joaobispo2077/payfast#readme"
+    "name": "payfast",
+    "version": "1.0.0",
+    "description": "Um gateway de pagamentos por meio de recursos http",
+    "main": "index.js",
+    "scripts": {
+        "start": "nodemon index.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/joaobispo2077/payfast.git"
+    },
+    "keywords": [
+        "gateway.",
+        "pagamentos",
+        "api"
+    ],
+    "author": "João Bispo",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/joaobispo2077/payfast/issues"
+    },
+    "homepage": "https://github.com/joaobispo2077/payfast#readme",
+    "dependencies": {
+        "consign": "^0.1.6",
+        "express": "^4.17.1",
+        "nodemon": "^2.0.4"
+    }
 }
