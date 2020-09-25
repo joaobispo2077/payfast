@@ -7,7 +7,7 @@ module.exports = (app) => {
         const pagamentoDAO = new app.src.app.database.PagamentoDAO(connection);
         pagamentoDAO.listAll((err, result) => {
             console.log(result);
-            res.status(200).json(...result);
+            res.status(200).json(result);
         });
 
     });
@@ -15,13 +15,13 @@ module.exports = (app) => {
     app.post('/pagamentos/pagamento', [
         body('forma_de_pagamento').notEmpty(),
         body('valor').notEmpty().isFloat(),
-    ], (req, res) => {
+    ], async(req, res) => {
 
         const errors = validationResult(req);
+
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-
 
         const payment = req.body;
         console.log(payment);
@@ -29,13 +29,11 @@ module.exports = (app) => {
         payment.status = 'CRIADO';
         payment.data = new Date;
 
-
-        const connection = app.src.app.database.connection();
+        const connection = await app.src.app.database.connection();
         const pagamentoDAO = new app.src.app.database.PagamentoDAO(connection);
 
-        console.log(connection);
         console.log(payment);
-        pagamentoDAO.create(payment, (err, result) => {
+        await pagamentoDAO.create(payment, (err, result) => {
             if (err) {
                 res.status(400).json({ message: err.sqlMessage });
             }
@@ -49,6 +47,27 @@ module.exports = (app) => {
             }
         });
 
-    })
+    });
+
+    app.patch('/pagamentos/pagamento/:id', (req, res) => {
+        const { id } = req.params;
+        // const status = req.body.status;
+
+
+        const payment = {};
+        payment.id = id;
+        payment.status = 'APROVADO'; //status
+
+        const connection = app.src.app.database.connection();
+        const pagamentoDAO = new app.src.app.database.PagamentoDAO(connection);
+
+        pagamentoDAO.update(payment, (err, result) => {
+            if (err) {
+                res.status(400).json(err);
+            }
+
+            res.status(200).json(result);
+        });
+    });
 
 }
