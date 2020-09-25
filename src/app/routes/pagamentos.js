@@ -1,3 +1,5 @@
+const { body, validationResult } = require('express-validator');
+
 module.exports = (app) => {
 
     app.get('/pagamentos', (req, res) => {
@@ -10,7 +12,17 @@ module.exports = (app) => {
 
     });
 
-    app.post('/pagamentos/pagamento', (req, res) => {
+    app.post('/pagamentos/pagamento', [
+        body('forma_de_pagamento').notEmpty(),
+        body('valor').notEmpty().isFloat(),
+    ], (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
+
         const payment = req.body;
         console.log(payment);
 
@@ -30,6 +42,8 @@ module.exports = (app) => {
 
             if (!err) {
                 console.log('Pagamento criado');
+                console.log(result);
+                res.location('/pagamentos/pagamento/' + result.insertId);
                 res.status(201).json(payment);
 
             }

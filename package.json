@@ -25,6 +25,7 @@
     "dependencies": {
         "consign": "^0.1.6",
         "express": "^4.17.1",
+        "express-validator": "^6.6.1",
         "mysql": "^2.18.1"
     },
     "devDependencies": {
