@@ -13,6 +13,7 @@ module.exports = () => {
 
     consign()
         .include('./src/app/routes')
+        .then('./src/app/database')
         .into(app);
 
     return app;
