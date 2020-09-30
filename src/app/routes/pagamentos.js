@@ -67,6 +67,29 @@ module.exports = (app) => {
             }
 
             res.status(200).json(result);
+            console.log('Pagamento Aprovado');
+        });
+    });
+
+    app.delete('/pagamentos/pagamento/:id', (req, res) => {
+        const { id } = req.params;
+        // const status = req.body.status;
+
+
+        const payment = {};
+        payment.id = id;
+        payment.status = 'CANCELADO'; //status
+
+        const connection = app.src.app.database.connection();
+        const pagamentoDAO = new app.src.app.database.PagamentoDAO(connection);
+
+        pagamentoDAO.update(payment, (err, result) => {
+            if (err) {
+                res.status(400).json(err);
+            }
+
+            res.status(204).json(result);
+            console.log('Pagamento Cancelado');
         });
     });
 
