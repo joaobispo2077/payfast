@@ -13,8 +13,8 @@ module.exports = (app) => {
     });
 
     app.post('/pagamentos/pagamento', [
-        body('forma_de_pagamento').notEmpty(),
-        body('valor').notEmpty().isFloat(),
+        body('payment.forma_de_pagamento').notEmpty(),
+        body('payment.valor').notEmpty().isFloat(),
     ], async(req, res) => {
 
         const errors = validationResult(req);
@@ -23,8 +23,9 @@ module.exports = (app) => {
             return res.status(400).json({ errors: errors.array() });
         }
 
-        const payment = req.body;
+        const { payment } = req.body;
         console.log(payment);
+
 
         payment.status = 'CRIADO';
         payment.data = new Date;
@@ -42,24 +43,50 @@ module.exports = (app) => {
                 payment.id = result.insertId
                 console.log('Pagamento criado');
                 console.log(result);
-                res.location('/pagamentos/pagamento/' + payment.id);
 
-                const response = {
-                    data_payment: payment,
-                    links: [{
-                            href: "http://localhost:3000/pagamentos/pagamento/" + payment.id,
-                            rel: "confirmar",
-                            method: 'PATCH'
-                        },
-                        {
-                            href: "http://localhost:3000/pagamentos/pagamento/" + payment.id,
-                            rel: "cancelar",
-                            method: "DELETE"
+                if (payment.forma_de_pagamento == 'cartao') {
+                    const { card } = req.body;
+                    console.log(card);
+                    const clientCards = new app.src.app.services.clientCards();
+                    clientCards.authenticate(card, function(err, request, response, obj) {
+                        if (err) {
+                            console.log(err);
+                            request.status(400).send(err);
+                            return;
+
                         }
-                    ]
-                }
 
-                res.status(201).json(response);
+                        res.location('/pagamentos/pagamento/' + payment.id);
+
+                        const responseData = {
+                            data_payment: payment,
+                            card: obj,
+                            links: [{
+                                    href: "http://localhost:3000/pagamentos/pagamento/" + payment.id,
+                                    rel: "confirmar",
+                                    method: 'PATCH'
+                                },
+                                {
+                                    href: "http://localhost:3000/pagamentos/pagamento/" + payment.id,
+                                    rel: "cancelar",
+                                    method: "DELETE"
+                                }
+                            ]
+                        }
+
+                        console.log(obj);
+
+
+                        res.status(201).json(responseData);
+                        return;
+                    });
+
+                } else {
+
+
+
+                    res.status(201).json(response);
+                }
 
             }
         });

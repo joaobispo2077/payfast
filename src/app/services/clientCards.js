@@ -1,12 +1,16 @@
 const restify = require('restify-clients');
 
+function ClientCards() { //this is a constructor wtf.
+    this._client = restify.createJsonClient({
+        url: 'http://localhost:3001'
+    });
 
-const client = restify.createJsonClient({
-    url: 'http://localhost:3001'
-});
+}
 
-client.post('/cartoes/autoriza', (err, req, res, obj) => {
-    // err ? console.log(err) : console.log('não tem erro')
-    console.log('Consumindo serviço de cartões');
-    console.log(obj);
-});
+ClientCards.prototype.authenticate = function(card, callback) {
+    this._client.post('/cartoes/autoriza', card, callback);
+}
+
+module.exports = function() {
+    return ClientCards;
+}
