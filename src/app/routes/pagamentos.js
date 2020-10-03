@@ -12,6 +12,22 @@ module.exports = (app) => {
 
     });
 
+    app.get('/pagamentos/:id', (req, res) => {
+        const { id } = req.params;
+
+        const connection = app.src.app.database.connection();
+        const pagamentoDAO = new app.src.app.database.PagamentoDAO(connection);
+
+        pagamentoDAO.searchById(id, (err, result) => {
+            if (err) {
+                res.status(400).json(err);
+                return;
+            } else {
+                res.status(200).json(result);
+            }
+        })
+    });
+
     app.post('/pagamentos/pagamento', [
         body('payment.forma_de_pagamento').notEmpty(),
         body('payment.valor').notEmpty().isFloat(),
