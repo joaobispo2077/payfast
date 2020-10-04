@@ -15,17 +15,31 @@ module.exports = (app) => {
     app.get('/pagamentos/:id', (req, res) => {
         const { id } = req.params;
 
-        const connection = app.src.app.database.connection();
-        const pagamentoDAO = new app.src.app.database.PagamentoDAO(connection);
+        const memcachedClient = app.src.app.services.memcachedClient();
 
-        pagamentoDAO.searchById(id, (err, result) => {
-            if (err) {
-                res.status(400).json(err);
-                return;
+        memcachedClient.get(`pagamento-${id}`, (err, obj) => {
+            if (err || !obj) {
+                console.log(` MISS - chave não encontrada`);
+                const connection = app.src.app.database.connection();
+                const pagamentoDAO = new app.src.app.database.PagamentoDAO(connection);
+
+                pagamentoDAO.searchById(id, (err, result) => {
+                    if (err) {
+                        res.status(400).json(err);
+                        return;
+                    } else {
+                        res.status(200).json(result);
+                        return;
+                    }
+                });
             } else {
-                res.status(200).json(result);
+                console.log(`HIT - valor: ${JSON.stringify(obj)}`);
+                res.status(200).json(obj);
+                return;
             }
-        })
+        });
+
+
     });
 
     app.post('/pagamentos/pagamento', [
@@ -59,6 +73,13 @@ module.exports = (app) => {
                 payment.id = result.insertId
                 console.log('Pagamento criado');
                 console.log(result);
+
+                const memcachedClient = app.src.app.services.memcachedClient();
+
+                memcachedClient.set(`pagamento-${payment.id}`, payment,
+                    60000, (err) => {
+                        console.log(`nova chave adicionada ao cache: pagamento-${payment.id}`);
+                    });
 
                 if (payment.forma_de_pagamento == 'cartao') {
                     const { card } = req.body;
