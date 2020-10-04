@@ -12,13 +12,13 @@ module.exports = (app) => {
 
     });
 
-    app.get('/pagamentos/:id', (req, res) => {
+    app.get('/pagamentos/pagamento/:id', (req, res) => {
         const { id } = req.params;
 
         const memcachedClient = app.src.app.services.memcachedClient();
 
-        memcachedClient.get(`pagamento-${id}`, (err, obj) => {
-            if (err || !obj) {
+        memcachedClient.get(`pagamento-${id}`, (error, obj) => {
+            if (error || !obj) {
                 console.log(` MISS - chave não encontrada`);
                 const connection = app.src.app.database.connection();
                 const pagamentoDAO = new app.src.app.database.PagamentoDAO(connection);
@@ -88,7 +88,7 @@ module.exports = (app) => {
                     clientCards.authenticate(card, function(err, request, response, obj) {
                         if (err) {
                             console.log(err);
-                            request.status(400).send(err);
+                            response.status(400).send(err);
                             return;
 
                         }
