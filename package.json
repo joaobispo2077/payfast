@@ -30,7 +30,8 @@
         "mysql": "^2.18.1",
         "restify": "^8.5.1",
         "restify-clients": "^4.0.0",
-        "soap": "^0.33.0"
+        "soap": "^0.33.0",
+        "winston": "^3.3.3"
     },
     "devDependencies": {
         "nodemon": "^2.0.4"

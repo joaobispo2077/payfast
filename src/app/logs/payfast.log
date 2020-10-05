@@ -1,0 +1,3 @@
+{"level":"info","message":"Log utilizando o winston"}
+{"level":"info","message":"log utiliazndo winston e info"}
+{"message":"log mais maroto","level":"info","service":"user-service"}
