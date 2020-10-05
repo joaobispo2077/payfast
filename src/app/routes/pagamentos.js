@@ -1,4 +1,5 @@
 const { body, validationResult } = require('express-validator');
+const logger = require('../services/logger.js');
 
 module.exports = (app) => {
 
@@ -14,6 +15,10 @@ module.exports = (app) => {
 
     app.get('/pagamentos/pagamento/:id', (req, res) => {
         const { id } = req.params;
+
+        logger.info('consultando o pagamento de id: ' + id);
+        logger.log('info', `consultando o pagamento de id: ${id}`);
+
 
         const memcachedClient = app.src.app.services.memcachedClient();
 
