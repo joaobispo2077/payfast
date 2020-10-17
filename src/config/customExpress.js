@@ -1,13 +1,13 @@
 const express = require('express');
 const morgan = require('morgan');
 const consign = require('consign');
-
+const cors = require('cors');
 const logger = require('../app/services/logger.js');
 
 
 module.exports = () => {
     const app = express();
-
+    app.use(cors());
     app.use(morgan("common", {
         stream: {
             write: (message) => {
